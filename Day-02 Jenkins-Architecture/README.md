@@ -1,80 +1,167 @@
 # 🚀 Jenkins Learning Series – Day 2
 
-# Jenkins Architecture Explained
+# 🏗️ Jenkins Architecture Explained
 
-Understand How Jenkins Works Behind the Scenes
-
----
-
-## 📖 Introduction
-
-Jenkins follows a **Controller-Agent Architecture** that enables scalable, distributed, and efficient Continuous Integration and Continuous Delivery (CI/CD).
-
-Instead of executing every build on a single machine, Jenkins distributes workloads across multiple agents, allowing teams to run builds in parallel, improve performance, and scale their CI/CD infrastructure.
-
-Understanding Jenkins Architecture is essential for every DevOps Engineer because it forms the foundation of building reliable and production-ready CI/CD pipelines.
+Learn how Jenkins works behind the scenes using its **Controller-Agent Architecture**. This guide covers the core components, build execution flow, and enterprise best practices used in modern CI/CD environments.
 
 ---
 
-## 📚 Topics Covered
+## 📚 What You'll Learn
 
-- 🏗 Jenkins Architecture Overview
-- 🖥 Jenkins Controller (Master)
-- 💻 Jenkins Agents (Nodes)
-- ⚙ Executors
-- 📂 Workspace
-- 📦 Build Queue
-- 🔄 Jenkins Build Flow
-- 🔗 Controller-Agent Communication
-- ☁ Distributed Jenkins Architecture
-- 🏢 Enterprise Jenkins Workflow
-- 💡 Production Best Practices
-- 🎯 Interview Questions
+- ✅ What is Jenkins Architecture?
+- ✅ Controller vs Agent
+- ✅ Executors and Workspaces
+- ✅ Build Queue
+- ✅ Complete Jenkins Build Flow
+- ✅ Distributed Jenkins Architecture
+- ✅ Enterprise CI/CD Workflow
+- ✅ Production Best Practices
+- ✅ Interview Questions
 
 ---
 
-## 📂 Repository Files
+## 📂 Repository Structure
+
+```text
+Day-02-Jenkins-Architecture/
+
+├── README.md
+├── Theory.md
+├── Cheat-Sheet.md
+├── Interview-Questions.md
+├── Resources.md
+└── Jenkins-Day2-Architecture.png
+```
+
+---
+
+## 🏗️ Jenkins Architecture
+
+```text
+                Developer
+                     │
+              Push Source Code
+                     │
+                     ▼
+             Git Repository
+                     │
+              Webhook Trigger
+                     │
+                     ▼
+          Jenkins Controller
+                     │
+      Schedules & Assigns Jobs
+                     │
+     ┌───────────────┼───────────────┐
+     ▼               ▼               ▼
+ Linux Agent    Windows Agent   Docker Agent
+     │               │               │
+     └───────────────┼───────────────┘
+                     │
+                     ▼
+              Build • Test • Deploy
+```
+
+---
+
+## 🔄 Jenkins Build Flow
+
+```text
+Developer
+    │
+    ▼
+GitHub
+    │
+Webhook
+    ▼
+Jenkins Controller
+    │
+Available Agent
+    ▼
+Checkout Code
+    ▼
+Build
+    ▼
+Test
+    ▼
+Package
+    ▼
+Docker Build
+    ▼
+Deploy
+    ▼
+Notification
+```
+
+---
+
+## 📁 Files in This Repository
 
 | File | Description |
 |------|-------------|
-| **Theory.md** | Complete explanation of Jenkins Architecture with examples |
-| **Cheat-Sheet.md** | Quick revision notes for interviews |
+| **Theory.md** | Complete explanation of Jenkins Architecture |
+| **Cheat-Sheet.md** | Quick revision notes |
+| **Interview-Questions.md** | Frequently asked Jenkins Architecture interview questions |
+| **Resources.md** | Official documentation, books, and learning resources |
 | **Jenkins-Day2-Architecture.png** | Handwritten infographic |
 
 ---
 
-## 🎯 Learning Objectives
+## 🎯 Key Takeaways
 
-After completing this module, you will understand:
-
-- How Jenkins Architecture works
-- Responsibilities of the Controller and Agents
-- What Executors are and how they run builds
-- How Build Queue manages multiple jobs
-- What Workspace is used for
-- How Controller communicates with Agents
-- Distributed Jenkins Architecture
-- Enterprise Jenkins workflow
-- Production best practices
+- Jenkins follows a **Controller-Agent Architecture**.
+- The **Controller** manages Jenkins and schedules jobs.
+- **Agents** execute build, test, and deployment tasks.
+- **Executors** enable parallel build execution.
+- The **Build Queue** manages waiting jobs.
+- Distributed Jenkins improves scalability, reliability, and performance.
 
 ---
 
-## 👨‍💻 Prerequisites
+## 🎓 Prerequisites
 
-- Basic understanding of Jenkins
-- Basic knowledge of CI/CD
-- Git fundamentals
+Before starting this topic, you should be familiar with:
 
----
-
-## 📖 Next Topic
-
-➡ **Day 3 – Jenkins Pipelines & Jenkinsfile**
-
-Learn Declarative and Scripted Pipelines with real-world enterprise examples.
+- Jenkins Fundamentals
+- Continuous Integration (CI)
+- Continuous Delivery (CD)
+- Basic Git & GitHub concepts
 
 ---
 
-⭐ If you find this repository helpful, don't forget to **Star** the repository and share it with others!
+## 📚 Recommended Learning Order
+
+1. 📖 Read **Theory.md**
+2. 📝 Revise using **Cheat-Sheet.md**
+3. 🎯 Practice with **Interview-Questions.md**
+4. 🔗 Explore **Resources.md**
+5. 🖼️ Review the handwritten infographic
+
+---
+
+## 🚀 Next Topic
+
+➡️ **Day 3 – Jenkins Pipelines & Jenkinsfile**
+
+We'll cover:
+
+- Declarative vs Scripted Pipelines
+- Jenkinsfile Structure
+- Stages & Steps
+- Environment Variables
+- Parameters
+- Post Actions
+- Pipeline Best Practices
+
+---
+
+## ⭐ Support
+
+If you found this repository helpful:
+
+- ⭐ Star the repository
+- 🍴 Fork it for your own learning
+- 📢 Share it with the DevOps community
+- 🤝 Connect with me on LinkedIn
 
 Happy Learning! 🚀
