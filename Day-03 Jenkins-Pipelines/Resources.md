@@ -1,28 +1,173 @@
-# Resources — Jenkins Pipelines
+# 🚀 Jenkins Learning Series – Day 3
 
-## Official Documentation
-- [Jenkins Pipeline Syntax Reference](https://www.jenkins.io/doc/book/pipeline/syntax/)
-- [Jenkins Pipeline Steps Reference](https://www.jenkins.io/doc/pipeline/steps/)
-- [Shared Libraries Documentation](https://www.jenkins.io/doc/book/pipeline/shared-libraries/)
-- [Kubernetes Plugin for Jenkins Agents](https://plugins.jenkins.io/kubernetes/)
-- [AWS Credentials Plugin](https://plugins.jenkins.io/aws-credentials/)
+# Learning Resources
 
-## Plugins Worth Knowing
-- **Blue Ocean** — modern visual pipeline UI
-- **Kubernetes Plugin** — dynamic pod-based agents
-- **EC2 Fleet Plugin** — auto-scaling EC2 build agents
-- **Lockable Resources** — prevent overlapping deployments
-- **Pipeline: AWS Steps** — native AWS step wrappers
+---
 
-## Further Reading
-- [TMS Outsource — Git & DevOps Blog](https://tms-outsource.com/blog/)
+# Official Documentation
 
-## Related Days in This Series
-- `Day 01` — Linux Fundamentals for DevOps
-- `Day 02` — Docker Container Lifecycle
-- `Day 03` — Jenkins Pipelines *(this day)*
-- `Day 04` — Jenkins Agents & Distributed Builds *(next)*
+## Jenkins
 
-## Practice
-- Try converting the `scripted.Jenkinsfile` example in this repo into a Declarative pipeline using `matrix { }` for the multi-service builds.
-- Set up a local Jenkins instance (Docker or Rancher Desktop) and wire a Shared Library repo to test the `vars/buildAndDeploy.groovy` pattern from Part-2 notes.
+https://www.jenkins.io/doc/
+
+---
+
+## Jenkins Pipeline Syntax
+
+https://www.jenkins.io/doc/book/pipeline/syntax/
+
+---
+
+## Jenkins User Handbook
+
+https://www.jenkins.io/doc/book/
+
+---
+
+## Jenkins Plugins
+
+https://plugins.jenkins.io/
+
+---
+
+# Source Code
+
+## Jenkins GitHub Repository
+
+https://github.com/jenkinsci/jenkins
+
+---
+
+# Groovy Language
+
+https://groovy-lang.org/
+
+---
+
+# Docker Documentation
+
+https://docs.docker.com/
+
+---
+
+# Kubernetes Documentation
+
+https://kubernetes.io/docs/
+
+---
+
+# Maven Documentation
+
+https://maven.apache.org/guides/
+
+---
+
+# Recommended Jenkins Plugins
+
+- Git Plugin
+- Pipeline Plugin
+- Blue Ocean
+- Docker Pipeline
+- Credentials Plugin
+- Kubernetes Plugin
+- Workspace Cleanup Plugin
+- Pipeline Utility Steps
+- Email Extension Plugin
+- Slack Notification Plugin
+
+---
+
+# Recommended Hands-on Labs
+
+- Install Jenkins
+- Configure GitHub Webhook
+- Create a Declarative Pipeline
+- Create a Scripted Pipeline
+- Build a Maven Project
+- Run Unit Tests
+- Build Docker Image
+- Push Docker Image
+- Deploy to Kubernetes
+- Add Slack Notifications
+
+---
+
+# Recommended Learning Path
+
+## Day 1
+
+- Jenkins Fundamentals
+
+## Day 2
+
+- Jenkins Architecture
+
+## Day 3
+
+- Jenkins Pipelines & Jenkinsfile
+
+## Day 4
+
+- Credentials & Secrets Management
+
+## Day 5
+
+- Git Integration & Webhooks
+
+## Day 6
+
+- Docker Integration
+
+## Day 7
+
+- Kubernetes Integration
+
+## Day 8
+
+- Shared Libraries
+
+## Day 9
+
+- Jenkins Security & Best Practices
+
+## Day 10
+
+- Production CI/CD Project
+
+---
+
+# Production Best Practices
+
+- Keep Jenkinsfiles inside Git repositories.
+- Use Declarative Pipelines whenever possible.
+- Secure secrets with Jenkins Credentials.
+- Use dedicated agents for builds.
+- Clean workspaces after execution.
+- Use Shared Libraries for reusable logic.
+- Enable notifications for every pipeline.
+- Version control every Pipeline.
+- Review Jenkinsfiles through Pull Requests.
+- Continuously improve pipeline performance.
+
+---
+
+# Next Topic
+
+## Jenkins Learning Series – Day 4
+
+### Jenkins Credentials & Secrets Management
+
+Topics:
+
+- Jenkins Credentials Store
+- Secret Text
+- Username & Password
+- SSH Keys
+- API Tokens
+- Docker Hub Credentials
+- GitHub PAT
+- AWS Credentials
+- Secure Pipeline Examples
+- Production Best Practices
+
+Happy Learning! 🚀

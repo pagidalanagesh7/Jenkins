@@ -1,115 +1,354 @@
-# Jenkins Pipelines — Cheat Sheet
+# 🚀 Jenkins Learning Series – Day 3
 
-## Pipeline Skeleton (Declarative)
+# Jenkins Pipelines Cheat Sheet
+
+---
+
+# What is a Pipeline?
+
+A Jenkins Pipeline is a collection of automated steps that build, test, package, and deploy an application.
+
+Pipeline as Code = Jenkinsfile
+
+---
+
+# Declarative Pipeline
+
+Recommended for most projects.
 
 ```groovy
 pipeline {
+
     agent any
-    environment { }
-    parameters { }
-    triggers { }
-    options { }
+
     stages {
-        stage('Name') {
-            when { }
-            steps { }
-            post { }
+
+        stage('Build') {
+
+            steps {
+
+                echo 'Building...'
+
+            }
+
         }
+
     }
-    post {
-        always { }
-        success { }
-        failure { }
-        unstable { }
-        changed { }
-    }
+
 }
 ```
 
-## Agent Types
+---
 
-| Agent | Use Case |
-|---|---|
-| `agent any` | Run on any available executor |
-| `agent none` | No global agent; each stage defines its own |
-| `agent { label 'linux' }` | Run on nodes with a specific label |
-| `agent { docker 'node:18' }` | Run inside a Docker container |
-| `agent { kubernetes { ... } }` | Run as a Kubernetes pod (EKS agents) |
+# Scripted Pipeline
 
-## `when` Conditions
-
-| Condition | Example |
-|---|---|
-| Branch | `when { branch 'main' }` |
-| Environment var | `when { environment name: 'ENV', value: 'prod' }` |
-| Expression | `when { expression { params.RUN_TESTS } }` |
-| Not | `when { not { branch 'main' } }` |
-| All of | `when { allOf { branch 'main'; environment name: 'ENV', value: 'prod' } }` |
-
-## Common Steps
-
-| Step | Purpose |
-|---|---|
-| `sh 'cmd'` | Run a shell command |
-| `checkout scm` | Checkout the configured SCM |
-| `echo 'msg'` | Print a message |
-| `input message: '...'` | Manual approval gate |
-| `retry(n) { }` | Retry a block n times |
-| `timeout(time: n, unit: 'MINUTES') { }` | Fail block after timeout |
-| `parallel { }` | Run stages/blocks concurrently |
-| `withCredentials([...]) { }` | Inject secrets scoped to a block |
-| `archiveArtifacts artifacts: '*.jar'` | Save build artifacts |
-| `junit 'results/*.xml'` | Publish test results |
-| `stash` / `unstash` | Pass files between stages/agents |
-| `cleanWs()` | Clean the workspace |
-
-## Credentials Binding Types
-
-| Type | Use Case |
-|---|---|
-| `usernamePassword` | Username + password pair |
-| `string` | Secret text / API token |
-| `sshUserPrivateKey` | SSH key auth |
-| `AmazonWebServicesCredentialsBinding` | AWS access key/secret |
-| `file` | Secret file (e.g., kubeconfig) |
-
-## Environment Variables (Built-in)
-
-| Variable | Meaning |
-|---|---|
-| `BUILD_NUMBER` | Current build number |
-| `BUILD_ID` | Same as build number (legacy) |
-| `JOB_NAME` | Name of the job |
-| `WORKSPACE` | Path to the workspace |
-| `GIT_COMMIT` | Full commit SHA |
-| `BRANCH_NAME` | Current branch (multibranch pipelines) |
-| `BUILD_URL` | Link to the build |
-
-## Declarative vs Scripted Quick Reference
-
-| Need | Declarative | Scripted |
-|---|---|---|
-| Simple linear CI/CD | ✅ Best fit | Overkill |
-| Dynamic stage generation | ⚠️ Awkward | ✅ Natural |
-| Built-in linting (`declarative-linter`) | ✅ | ❌ |
-| Full Groovy control flow | ⚠️ Only inside `script {}` | ✅ Native |
-
-## Shared Library Import
+Uses Groovy syntax.
 
 ```groovy
-@Library('my-shared-library') _
-// or pinned to a branch/tag:
-@Library('my-shared-library@v1.2.0') _
+node {
+
+    stage('Build') {
+
+        echo 'Building...'
+
+    }
+
+}
 ```
 
-## Useful CLI / Groovy Console Snippets
+---
+
+# Pipeline Structure
+
+```
+pipeline
+
+ ├── agent
+
+ ├── environment
+
+ ├── options
+
+ ├── parameters
+
+ ├── tools
+
+ ├── stages
+
+ │     ├── stage
+
+ │     │      └── steps
+
+ └── post
+```
+
+---
+
+# Common Pipeline Blocks
+
+| Block | Purpose |
+|---------|----------|
+| pipeline | Root block |
+| agent | Execution node |
+| stages | Collection of stages |
+| stage | Logical task |
+| steps | Commands to execute |
+| environment | Environment variables |
+| tools | Configure JDK, Maven, etc. |
+| options | Pipeline settings |
+| parameters | User inputs |
+| when | Conditional execution |
+| post | Post-build actions |
+
+---
+
+# Common Stage Names
+
+- Checkout
+- Build
+- Test
+- Package
+- Docker Build
+- Docker Push
+- Deploy
+- Cleanup
+
+---
+
+# Frequently Used Steps
 
 ```groovy
-// Cancel all queued builds for a job
-Jenkins.instance.getItemByFullName('my-job').getBuilds().each { it.doStop() }
+echo 'Hello'
+```
+
+```groovy
+sh 'mvn clean package'
+```
+
+```groovy
+git 'https://github.com/company/project.git'
+```
+
+```groovy
+checkout scm
+```
+
+```groovy
+cleanWs()
+```
+
+---
+
+# Environment Variables
+
+```groovy
+environment {
+
+    APP_NAME = "springboot-app"
+
+}
+```
+
+Useful Variables
+
+| Variable | Description |
+|-----------|-------------|
+| BUILD_NUMBER | Build number |
+| BUILD_ID | Build ID |
+| JOB_NAME | Job name |
+| WORKSPACE | Workspace path |
+| BUILD_URL | Build URL |
+| JENKINS_HOME | Jenkins installation path |
+
+---
+
+# Credentials
+
+```groovy
+environment {
+
+    DOCKER_CREDS = credentials('dockerhub-creds')
+
+}
+```
+
+Credential Types
+
+- Username & Password
+- Secret Text
+- Secret File
+- SSH Key
+- Docker Registry
+- GitHub PAT
+
+---
+
+# Post Actions
+
+```groovy
+post {
+
+    success {
+
+        echo 'Success'
+
+    }
+
+    failure {
+
+        echo 'Failure'
+
+    }
+
+    always {
+
+        cleanWs()
+
+    }
+
+}
+```
+
+---
+
+# Parallel Stage
+
+```groovy
+parallel {
+
+    stage('Unit Test') {
+
+    }
+
+    stage('API Test') {
+
+    }
+
+}
+```
+
+---
+
+# Pipeline Flow
+
+```
+Git Push
+
+↓
+
+Checkout
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Docker Build
+
+↓
+
+Deploy
+
+↓
+
+Notification
+```
+
+---
+
+# Best Practices
+
+- Store Jenkinsfile in Git
+- Never hardcode passwords
+- Use Jenkins Credentials
+- Use environment variables
+- Keep stages small
+- Fail Fast
+- Use meaningful stage names
+- Use parallel stages
+- Clean workspace
+- Archive artifacts
+
+---
+
+# Common Mistakes
+
+- Hardcoded secrets
+- Single large stage
+- Ignoring failed tests
+- No notifications
+- No cleanup
+- No version control
+
+---
+
+# Useful Commands
+
+```bash
+mvn clean package
 ```
 
 ```bash
-# Trigger a build remotely via CLI
-java -jar jenkins-cli.jar -s http://jenkins-url/ build my-job -p ENV=prod
+mvn test
+```
+
+```bash
+docker build -t app:v1 .
+```
+
+```bash
+docker push app:v1
+```
+
+```bash
+kubectl apply -f deployment.yaml
+```
+
+---
+
+# Enterprise CI/CD Flow
+
+```
+Developer
+
+↓
+
+GitHub
+
+↓
+
+Webhook
+
+↓
+
+Jenkins
+
+↓
+
+Build
+
+↓
+
+Test
+
+↓
+
+Docker
+
+↓
+
+Registry
+
+↓
+
+Kubernetes
+
+↓
+
+Notification
 ```

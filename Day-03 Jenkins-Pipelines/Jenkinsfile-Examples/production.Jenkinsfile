@@ -1,143 +1,141 @@
-@Library('company-shared-library') _
+/*
+-------------------------------------------------------------------
+Production Jenkins Pipeline
+Spring Boot + Maven + Docker + Kubernetes
+Jenkins Learning Series - Day 3
+-------------------------------------------------------------------
+*/
 
 pipeline {
-    agent {
-        kubernetes {
-            label 'jenkins-agent-eks'
-            defaultContainer 'builder'
-        }
+
+    agent any
+
+    tools {
+        maven 'Maven-3.9'
+        jdk 'JDK-17'
     }
 
     environment {
-        AWS_REGION      = 'us-east-1'
-        ECR_REGISTRY    = "<account-id>.dkr.ecr.us-east-1.amazonaws.com"
-        APP_NAME        = 'watsonx-service'
-        IMAGE_TAG       = "${env.GIT_COMMIT.take(7)}-${env.BUILD_NUMBER}"
-        SLACK_CHANNEL   = '#devops-alerts'
+
+        APP_NAME = "springboot-app"
+
+        DOCKER_IMAGE = "company/springboot-app"
+
+        VERSION = "${BUILD_NUMBER}"
+
+        DOCKER_CREDENTIALS = credentials('dockerhub-creds')
+
     }
 
     options {
+
         timestamps()
-        ansiColor('xterm')
-        buildDiscarder(logRotator(numToKeepStr: '30'))
+
         disableConcurrentBuilds()
-        timeout(time: 45, unit: 'MINUTES')
-    }
 
-    triggers {
-        pollSCM('H/5 * * * *')
-    }
+        buildDiscarder(logRotator(
+            numToKeepStr: '10'
+        ))
 
-    parameters {
-        choice(name: 'DEPLOY_ENV', choices: ['dev', 'staging', 'prod'], description: 'Target environment')
-        booleanParam(name: 'SKIP_TESTS', defaultValue: false, description: 'Skip test stage (emergency only)')
     }
 
     stages {
 
         stage('Checkout') {
-            steps {
-                checkout scm
-                script {
-                    env.GIT_COMMIT_SHORT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                }
-            }
-        }
 
-        stage('Static Analysis') {
-            parallel {
-                stage('Lint') {
-                    steps { sh 'npm run lint' }
-                }
-                stage('Security Scan') {
-                    steps { sh 'trivy fs --severity HIGH,CRITICAL .' }
-                }
-                stage('Dependency Check') {
-                    steps { sh 'npm audit --audit-level=high' }
-                }
+            steps {
+
+                git branch: 'main',
+                url: 'https://github.com/company/springboot-app.git'
+
             }
+
         }
 
         stage('Build') {
+
             steps {
-                sh "docker build -t ${ECR_REGISTRY}/${APP_NAME}:${IMAGE_TAG} ."
+
+                sh 'mvn clean package'
+
             }
+
         }
 
-        stage('Test') {
-            when {
-                expression { !params.SKIP_TESTS }
-            }
+        stage('Unit Test') {
+
             steps {
-                sh "docker run --rm ${ECR_REGISTRY}/${APP_NAME}:${IMAGE_TAG} npm run test:ci"
+
+                sh 'mvn test'
+
             }
-            post {
-                always {
-                    junit 'test-results/*.xml'
-                }
-            }
+
         }
 
-        stage('Push to ECR') {
+        stage('Docker Build') {
+
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-ecr-prod-creds']]) {
-                    retry(2) {
-                        sh '''
-                            aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
-                            docker push $ECR_REGISTRY/$APP_NAME:$IMAGE_TAG
-                        '''
-                    }
-                }
+
+                sh """
+                docker build \
+                -t ${DOCKER_IMAGE}:${VERSION} .
+                """
+
             }
+
         }
 
-        stage('Manual Approval') {
-            when {
-                expression { params.DEPLOY_ENV == 'prod' }
-            }
+        stage('Docker Push') {
+
             steps {
-                timeout(time: 15, unit: 'MINUTES') {
-                    input message: "Approve deployment of ${IMAGE_TAG} to PRODUCTION?", ok: 'Approve'
-                }
+
+                sh """
+                docker login \
+                -u ${DOCKER_CREDENTIALS_USR} \
+                -p ${DOCKER_CREDENTIALS_PSW}
+
+                docker push ${DOCKER_IMAGE}:${VERSION}
+                """
+
             }
+
         }
 
-        stage('Deploy') {
+        stage('Deploy to Kubernetes') {
+
             steps {
-                script {
-                    // Shared library function encapsulating kubectl/helm logic
-                    deployToEKS(
-                        appName: env.APP_NAME,
-                        image: "${ECR_REGISTRY}/${APP_NAME}:${IMAGE_TAG}",
-                        environment: params.DEPLOY_ENV,
-                        namespace: params.DEPLOY_ENV
-                    )
-                }
+
+                sh '''
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                '''
+
             }
+
         }
 
-        stage('Smoke Test') {
-            steps {
-                sh "./scripts/smoke-test.sh ${params.DEPLOY_ENV}"
-            }
-        }
     }
 
     post {
+
         success {
-            slackSend(channel: env.SLACK_CHANNEL, color: 'good',
-                message: "✅ ${APP_NAME} ${IMAGE_TAG} deployed to ${params.DEPLOY_ENV} successfully.")
+
+            echo 'Deployment completed successfully.'
+
         }
+
         failure {
-            slackSend(channel: env.SLACK_CHANNEL, color: 'danger',
-                message: "❌ Build ${env.BUILD_NUMBER} failed for ${APP_NAME}. Check: ${env.BUILD_URL}")
+
+            echo 'Deployment failed.'
+
         }
-        unstable {
-            slackSend(channel: env.SLACK_CHANNEL, color: 'warning',
-                message: "⚠️ Build ${env.BUILD_NUMBER} unstable for ${APP_NAME}.")
-        }
+
         always {
+
             cleanWs()
+
         }
+
     }
+
 }
