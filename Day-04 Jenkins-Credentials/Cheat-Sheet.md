@@ -113,3 +113,4 @@ withCredentials([
 ## One-Line Interview Answer
 
 > **Jenkins Credentials provide a secure, encrypted way to store and use sensitive information like passwords, API tokens, SSH keys, and secret files inside CI/CD pipelines without exposing them in code or logs.**
+    
