@@ -1,0 +1,9 @@
+Started by user admin
+
+[Pipeline] Start of Pipeline
+
++ docker login -u devops-user --password-stdin
+
+Login Succeeded
+
+Finished: SUCCESS

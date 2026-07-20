@@ -1,0 +1,12 @@
+Started by user admin
+
+[Pipeline] Start of Pipeline
+
++ kubectl get nodes
+
+NAME           STATUS   ROLES           AGE
+master-01      Ready    control-plane   20d
+worker-01      Ready    <none>          20d
+worker-02      Ready    <none>          20d
+
+Finished: SUCCESS

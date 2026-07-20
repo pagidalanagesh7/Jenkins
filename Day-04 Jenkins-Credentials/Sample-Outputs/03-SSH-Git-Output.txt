@@ -1,0 +1,13 @@
+Started by user admin
+
+[Pipeline] Start of Pipeline
+
+Cloning the remote Git repository...
+
+ > git fetch --tags
+
+Checking out Revision
+
+Branch: main
+
+Finished: SUCCESS
