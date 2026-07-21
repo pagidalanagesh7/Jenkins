@@ -1,0 +1,57 @@
+pipeline {
+
+    agent any
+
+    environment {
+        APP_NAME = "jenkins-demo"
+    }
+
+    stages {
+
+        stage('Checkout Source Code') {
+            steps {
+                echo "Checking out source code from GitHub..."
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "Building ${APP_NAME}..."
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                echo "Executing Test Cases..."
+            }
+        }
+
+        stage('Archive Artifacts') {
+            steps {
+                echo "Archiving Build Artifacts..."
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying ${APP_NAME}..."
+            }
+        }
+    }
+
+    post {
+
+        always {
+            echo "Pipeline Execution Completed."
+        }
+
+        success {
+            echo "Build Successful."
+        }
+
+        failure {
+            echo "Build Failed."
+        }
+    }
+}
