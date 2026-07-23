@@ -1,0 +1,86 @@
+# ============================================
+# Service Account
+# ============================================
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jenkins
+  namespace: jenkins
+
+---
+# ============================================
+# Role
+# ============================================
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: jenkins-role
+  namespace: jenkins
+
+rules:
+- apiGroups: [""]
+  resources:
+    - pods
+    - pods/log
+    - pods/exec
+    - services
+    - secrets
+    - configmaps
+    - persistentvolumeclaims
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+
+- apiGroups: ["apps"]
+  resources:
+    - deployments
+    - replicasets
+    - statefulsets
+    - daemonsets
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - update
+    - patch
+    - delete
+
+- apiGroups: ["batch"]
+  resources:
+    - jobs
+    - cronjobs
+  verbs:
+    - get
+    - list
+    - watch
+    - create
+    - delete
+
+---
+# ============================================
+# RoleBinding
+# ============================================
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: jenkins-rolebinding
+  namespace: jenkins
+
+subjects:
+- kind: ServiceAccount
+  name: jenkins
+  namespace: jenkins
+
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: jenkins-role  
