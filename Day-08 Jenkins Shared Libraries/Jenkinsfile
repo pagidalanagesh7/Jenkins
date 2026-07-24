@@ -1,46 +1,74 @@
-# Jenkinsfile
-
-```groovy
 @Library('company-library') _
 
 pipeline {
 
     agent any
 
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+        buildDiscarder(logRotator(numToKeepStr: '10'))
+    }
+
+    environment {
+        APP_NAME = "sample-app"
+        DOCKER_IMAGE = "company/sample-app"
+    }
+
     stages {
 
-        stage('Checkout') {
+        stage('Checkout Source Code') {
             steps {
+                echo "Checking out source code..."
                 checkout scm
             }
         }
 
-        stage('Build') {
+        stage('Build Application') {
             steps {
+                echo "Building application..."
                 buildApp()
             }
         }
 
-        stage('Unit Test') {
+        stage('Run Unit Tests') {
             steps {
+                echo "Running unit tests..."
                 runTests()
             }
         }
 
-        stage('Docker Build') {
+        stage('SonarQube Analysis') {
             steps {
+                echo "Running SonarQube analysis..."
+                sonarScan()
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo "Building Docker image..."
                 dockerBuild()
             }
         }
 
-        stage('Deploy') {
+        stage('Push Docker Image') {
             steps {
+                echo "Pushing Docker image..."
+                dockerPush()
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                echo "Deploying application..."
                 deployApp()
             }
         }
 
-        stage('Notification') {
+        stage('Notify Team') {
             steps {
+                echo "Sending notification..."
                 notifySlack()
             }
         }
@@ -49,7 +77,7 @@ pipeline {
     post {
 
         success {
-            echo "Pipeline executed successfully."
+            echo "Pipeline completed successfully."
         }
 
         failure {
@@ -57,98 +85,8 @@ pipeline {
         }
 
         always {
-            echo "Pipeline completed."
+            cleanWs()
+            echo "Workspace cleaned."
         }
     }
 }
-```
-
----
-
-## Explanation
-
-### `@Library('company-library') _`
-
-Loads the configured Jenkins Shared Library into the pipeline.
-
----
-
-### `agent any`
-
-Runs the pipeline on any available Jenkins agent.
-
----
-
-### Checkout Stage
-
-Retrieves the latest source code from the Git repository.
-
----
-
-### Build Stage
-
-Calls the reusable **buildApp()** function from the Shared Library.
-
----
-
-### Unit Test Stage
-
-Executes automated test cases using the **runTests()** function.
-
----
-
-### Docker Build Stage
-
-Builds the Docker image by calling **dockerBuild()**.
-
----
-
-### Deploy Stage
-
-Deploys the application using the reusable **deployApp()** function.
-
----
-
-### Notification Stage
-
-Sends build notifications through the **notifySlack()** function.
-
----
-
-### Post Section
-
-- **success** → Executes after a successful pipeline.
-- **failure** → Executes if the pipeline fails.
-- **always** → Executes regardless of the pipeline result.
-
----
-
-## Output Flow
-
-```text
-Load Shared Library
-        │
-        ▼
-Checkout Source Code
-        │
-        ▼
-Build Application
-        │
-        ▼
-Run Unit Tests
-        │
-        ▼
-Build Docker Image
-        │
-        ▼
-Deploy Application
-        │
-        ▼
-Send Notification
-```
-
----
-
-## Key Takeaway
-
-This Jenkinsfile contains only the pipeline workflow. All the implementation logic is stored inside the Jenkins Shared Library, making the pipeline cleaner, reusable, and easier to maintain.
